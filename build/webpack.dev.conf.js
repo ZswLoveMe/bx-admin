@@ -75,7 +75,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
           })
         }
       })
-      
+
       app.post("/api/login", function(req, res) {
         console.log("用户登录");
         let body = [];
@@ -107,13 +107,8 @@ const devWebpackConfig = merge(baseWebpackConfig, {
       });
       let menuList = [
         {
-          label:'菜单1',
-          
-          child:[
-            {
-              label:'子菜单'
-            }
-          ]
+          label:'仪表盘',
+          id:'1',
         }
       ]
       app.get('/api/menus',(req,res) =>{
