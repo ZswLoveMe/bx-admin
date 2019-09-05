@@ -22,4 +22,13 @@ let store = new Vuex.Store({
     }
 })
 
+// 订阅store变化
+store.subscribe((mutation, state) => {
+  if(mutation.type == 'setToken'){
+    localStorage.setItem("token", JSON.stringify(state.token));
+  }
+});
+
+
+
 export default store

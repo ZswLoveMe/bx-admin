@@ -8,8 +8,14 @@ import 'element-ui/lib/theme-chalk/index.css'
 import axios from 'axios'
 import interceptor from '../static/interceptor'
 import store from './store/index'
+import Router from 'vue-router'
+const routerPush = Router.prototype.push
+Router.prototype.push = function push(location) {
+  return routerPush.call(this, location).catch(error=> error)
+}
 
 Vue.use(ElementUI)
+
 
 Vue.prototype.$http = axios
 
