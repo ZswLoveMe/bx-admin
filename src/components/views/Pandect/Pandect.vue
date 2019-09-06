@@ -4,7 +4,10 @@
 
 <script>
   export default {
-    name: "Pandect"
+    name: "Pandect",
+    activated() {
+      console.log('我呗加载了')
+    }
   }
 </script>
 

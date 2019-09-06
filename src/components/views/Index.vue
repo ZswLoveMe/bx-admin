@@ -95,9 +95,11 @@
     name: "idnex",
     watch: {
       $route(route) {
-        this.routerCacheArr = this.$routerHistory._history
+        this.$routerHistory._history.map(item =>{
+          this.routerCacheArr.push(item.name)
+        })
+        this.routerCacheArr =[...new Set(this.routerCacheArr)]
         this.routerHistory = this.$routerHistory._history
-        console.log(route)
         this.routeTab =route.name
       }
     },
@@ -127,7 +129,7 @@
         tags: [],
         routerHistory: [],
         /*需要缓存数据的页面*/
-        routerCacheArr: [],
+        routerCacheArr: ['Pandect'],
         routeTab: "Comment"
       }
     },
