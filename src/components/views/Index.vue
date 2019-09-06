@@ -210,7 +210,10 @@
       //页面加载跳转到当前页面
       this.$nextTick(() => {
         this.toPandect()
+
       })
+    },
+    mounted() {
     }
   }
 </script>

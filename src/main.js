@@ -9,10 +9,15 @@ import axios from 'axios'
 import interceptor from '../static/interceptor'
 import store from './store/index'
 import Router from 'vue-router'
+import echarts from 'echarts'
 const routerPush = Router.prototype.push
+
+
 Router.prototype.push = function push(location) {
   return routerPush.call(this, location).catch(error=> error)
 }
+
+Vue.prototype.$echarts = echarts
 
 Vue.use(ElementUI)
 
