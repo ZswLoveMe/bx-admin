@@ -12,6 +12,14 @@ import Router from 'vue-router'
 import echarts from 'echarts'
 const routerPush = Router.prototype.push
 
+/*使用百度富文本编译器*/
+import './static/unditor/utf8-php/ueditor.config'
+import './static/unditor/utf8-php/ueditor.all.min'
+import './static/unditor/utf8-php/lang/zh-cn/zh-cn'
+import './static/unditor/utf8-php/ueditor.parse.min'
+
+
+
 
 Router.prototype.push = function push(location) {
   return routerPush.call(this, location).catch(error=> error)

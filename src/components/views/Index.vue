@@ -111,7 +111,7 @@
             label: "文章",
             id: 2,
             value:'Article',
-            children: [{label: "写文章", id: "21", parentId: 2,value:'EditArticle'}, {label: "所有文章", id: "22", parentId: 2,value:'AllArticle'}, {
+            children: [{label: "所有文章", id: "22", parentId: 2,value:'AllArticle'}, {label: "写文章", id: "21", parentId: 2,value:'EditArticle'}, {
               label: "分类目录",
               id: "23",
               parentId: 2,
@@ -420,6 +420,7 @@
         }
 
         .route-view-box {
+          position: relative;
           flex: 1;
           width: 100%;
           background-color: #fff;
