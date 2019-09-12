@@ -1,21 +1,17 @@
 <template>
     <div class="EditArticle">
-          <UEtor :config="config" :defaultMsg="defaultMsg" ref="ue"></UEtor>
+         <zsw-rich-text :value="value" :settingHeight="height" :tinymce="tinymce"></zsw-rich-text>
     </div>
 </template>
 
 <script>
-  import UEtor from "../../../ui/UEtor"
   export default {
     name: "EditArticle",
-    components: {UEtor},
     data(){
       return{
-        config:{
-          initialFrameWidth:1038,
-          initialFrameHeight:350
-        },
-        defaultMsg:''
+        value:'',
+        tinymce:'edit-article-zsw',
+        height:400
       }
     }
   }

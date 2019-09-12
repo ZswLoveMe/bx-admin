@@ -10,18 +10,15 @@ const History = {
   },
   push(path) { // 入栈
 
-        this._history.push(path)
+    this._history.push(path)
     console.log(" this._history：", this._history)
-    this._history =this.wipeRepetition(this._history,'name')
-
-
-
+    this._history = this.wipeRepetition(this._history, "name")
 
 
   },
   pop(path) {
-    console.log('pop',path)
-    this._history =  this._history.filter(item=>item.name != path.name)
+    console.log("pop", path)
+    this._history = this._history.filter(item => item.name != path.name)
   },
   canBack() {
     return this._history.length > 0

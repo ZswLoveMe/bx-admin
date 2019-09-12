@@ -7,7 +7,7 @@ import axios from 'axios'
  */
 export function get(url, params){
     return new Promise((resolve, reject) =>{
-       url = '/zsw'+url
+      console.log('url：', url)
         axios.get(url, {
             params: params
         }).then(res => {
@@ -25,7 +25,7 @@ export function get(url, params){
 export function post(url, params) {
     return new Promise((resolve, reject) => {
         console.log(JSON.stringify(params))
-         axios.post('/zsw/'+url, JSON.stringify(params))
+         axios.post(url, JSON.stringify(params))
         .then(res => {
             resolve(res.data);
         })
@@ -33,24 +33,4 @@ export function post(url, params) {
             reject(err.data)
         })
     });
-}
-
-function loadeAvatar(params){
-    let url = 'test/loadAvatar'
-    return get(url,params)
-}
-
-function login(params){
-    let url = '/api/login'
-    return post(url,params)
-}
-
-function outLogin(params) {
-    return get('/api/logout',params)
-}
-
-export {
-    loadeAvatar,
-    login,
-    outLogin
 }

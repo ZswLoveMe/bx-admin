@@ -20,8 +20,7 @@
 </template>
 
 <script>
-  import {loadeAvatar, login} from "../api/api"
-
+  import GlobalService from "@/services/global";
   export default {
     name: "Login",
     data() {
@@ -54,9 +53,8 @@
           }
         })
         if (valid) {
-          login(this.loginForm).then(res => {
-            console.log(res)
-            const {code, token, message} = res
+          GlobalService.userLogin(this.loginForm).then(res => {
+            const {code, token, message} = res.data
             if (code == 0) {
               // 登录成功
               localStorage.setItem("token", token) // 缓存至本地
@@ -78,8 +76,9 @@
       },
       loaderAvatar() {
         if (this.loginForm.email.trim() === "") return
-        loadeAvatar({email: this.loginForm.email})
+        GlobalService.loadAvatar({email: this.loginForm.email})
           .then(res => {
+            res =res.data
             if (res) {
               if (res.code == 3) {
                 console.log(111)

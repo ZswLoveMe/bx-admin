@@ -90,7 +90,6 @@
   </div>
 </template>
 <script>
-  import {outLogin} from "@/api/api"
   export default {
     name: "idnex",
     watch: {

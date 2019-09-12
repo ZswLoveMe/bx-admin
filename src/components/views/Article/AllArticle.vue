@@ -108,8 +108,8 @@
 </template>
 
 <script>
-  import SearchInputBtn from "../../../ui/SearchInputBtn"
-  import Pagination from "../../../ui/Pagination"
+  import SearchInputBtn from "../../../ui/components/SearchInputBtn"
+  import Pagination from "../../../ui/components/Pagination"
   import {formatDate} from '@/utils/formatDate'
   import {pageQuery} from "../../../api/atomTestApi/atom"
 

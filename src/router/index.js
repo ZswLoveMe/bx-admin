@@ -1,72 +1,27 @@
+// import Vue from 'vue'
+// import Router from 'vue-router'
+
 import Vue from 'vue'
-import Router from 'vue-router'
-import Index from '@/components/views/Index'
-import Login from '@/components/Login'
+import VueRouter from 'vue-router'
+import RouterConfig from './modules' // 引入业务逻辑模块
+import CommonRouters from './common' // 引入通用模块
 import store from '../store'
 import History from '../utils/history';
-Vue.use(Router)
+Vue.use(VueRouter)
 Vue.use(History)
-
-// 实例化之前，扩展Router
-Router.prototype.goBack = function () {
-  this.isBack = true;
+VueRouter.prototype.goBack =  function(){
+  this.isBack = true
 }
 
- let router = new Router({
-  routes: [
-    {
-      path: '/',
-      name: 'index',
-      component: Index,
-      meta: {auth: true}
-    },
-    {
-      path: '/index',
-      name: 'index',
-      component: Index,
-      meta: {auth: true},
-      children:[
-        {
-          path: '/index/comment',
-          component: () => import('@/components/views/Comment/Comment'),
-          name: 'Comment',
-          meta: {auth: true}
-        },
-        {
-          path: '/index/pandect',
-          component: () => import('@/components/views/Pandect/Pandect'),
-          name: 'Pandect',
-          meta: {auth: true}
-        },
-        {
-          path: '/index/user',
-          component: () => import('@/components/views/User/User'),
-          name: 'User',
-          meta: {auth: true}
-        },
-        {
-          path:'/article/editArticle',
-          name: 'EditArticle',
-          component: () => import('@/components/views/Article/editArticle'),
-          meta: {auth: true}
-        },
-        {
-          path:'/article/allArticle',
-          name: 'AllArticle',
-          component: () => import('@/components/views/Article/AllArticle'),
-          meta: {auth: true}
-        }
-      ]
-    },
-    {
-      path:'/login',
-      name:'login',
-      component:Login
-    }
-  ]
+
+console.log('RouterConfig.concat(CommonRouters)：', RouterConfig.concat(CommonRouters))
+let router = new VueRouter({
+  mode: 'history',// 需要服务端支持
+  scrollBehavior: () => ({ y: 0 }),
+  routes: RouterConfig.concat(CommonRouters)
 })
 
-// 守卫
+
 router.beforeEach((to,from,next) => {
   if (to.meta.auth) { // 查看路由是否需要登录
     // 需要认证，则检查令牌

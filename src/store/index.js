@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-
+import GlobalService from "@/services/global";
 Vue.use(Vuex)
 
 let store = new Vuex.Store({
