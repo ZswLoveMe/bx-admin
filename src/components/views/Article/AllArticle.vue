@@ -2,8 +2,10 @@
   <el-container class="all-article">
     <el-header style="height: 30px">
       <div class="title">
-        <h1>所有文章</h1>
-        <el-button type="info" size="mini">写文章</el-button>
+        <zsw-title>
+          <h1>所有文章</h1>
+          <el-button type="info" size="mini">写文章</el-button>
+        </zsw-title>
       </div>
     </el-header>
     <el-main>
@@ -219,8 +221,8 @@
     padding: 15px;
 
     .title {
-      height: 30px;
-
+      position: relative;
+      margin-top: -10px;
       h1 {
         display: inline-block;
         font-weight: 500;

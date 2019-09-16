@@ -11,12 +11,16 @@ import store from './store/index'
 import Router from 'vue-router'
 import echarts from 'echarts'
 const routerPush = Router.prototype.push
-
-
-/*自定义UI库*/
-import  ZswUi from './ui'
-
+import Viewer from 'v-viewer'
+import ZswUi from './ui'
 Vue.use(ZswUi)
+//百度富文本编辑器
+
+Vue.use(Viewer)
+
+
+
+
 
 Router.prototype.push = function push(location) {
   return routerPush.call(this, location).catch(error=> error)

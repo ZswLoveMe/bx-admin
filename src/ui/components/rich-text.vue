@@ -6,8 +6,8 @@
 
 <script>
 import tinymce from 'tinymce/tinymce'
-import 'tinymce/themes/modern/theme'
 import Editor from '@tinymce/tinymce-vue'
+import 'tinymce/themes/silver/theme'
 import 'tinymce/plugins/image'
 import 'tinymce/plugins/link'
 import 'tinymce/plugins/code'
@@ -26,22 +26,17 @@ export default {
       tinymceHtml: null,
       tinymceID:"",
       init: {
-        height: 400,
+        height: this.settingHeight,
+        language_url: `/static/tinymce/langs/zh_CN.js`,
+        language: 'zh_CN',
+        skin_url: '/static/tinymce/skins/ui/oxide',
+        browser_spellcheck: true, // 拼写检查
+        branding: false, // 去水印
+        elementpath: false,  //禁用编辑器底部的状态栏
+        statusbar: false, // 隐藏编辑器底部的状态栏
+        paste_data_images: true, // 允许粘贴图像
         plugins: 'link lists image  code table colorpicker textcolor wordcount contextmenu',
         toolbar:'bold italic underline strikethrough | fontsizeselect | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent blockquote | undo redo | link unlink image code media  | removeformat',   // 富文本的自带的功能
-        branding: false,
-        images_upload_handler(blobInfo, success, failure){
-          let formdata = new FormData()
-          formdata.set('file', blobInfo.blob())
-          let config = {
-            headers:{"Accept": "application/json"}
-          };
-          // axios.post('/atom/uploadFile/uploadPublicFile',  formdata ,config).then(res => {
-          //   success(res.data.rspData.allUrl)
-          // }).catch(res => {
-          //   failure('error')
-          // })
-        }
       }
     }
   },
@@ -63,6 +58,7 @@ export default {
       this.tinymceHtml = newValue
     },
     settingHeight:function(newValue){
+       console.log('newValue:',newValue);
       this.init.height = newValue
     },
     tinymceHtml:function(newValue){
