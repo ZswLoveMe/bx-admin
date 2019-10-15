@@ -1,6 +1,7 @@
 <template>
   <div :class="required ? 'zsw-title__required' : 'zsw-title'">
     <slot></slot>
+    <slot name="hint"></slot>
   </div>
 </template>
 

@@ -29,7 +29,7 @@ const History = {
       let flag = true
       if (arr.length >= 1) {
         arr.forEach(item => {
-          if (item[id] == supplier[id]) {
+          if (item[id] === supplier[id]) {
             flag = false
           }
         })

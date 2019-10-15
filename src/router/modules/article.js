@@ -19,6 +19,20 @@ export default [
         name: 'AllArticle',
         component: () => import('@/components/views/Article/AllArticle'),
         meta: {auth: true}
-      }]
+      },
+      {
+        path:'/article/editArticle',
+        name: 'EditArticle',
+        component: () => import('@/components/views/Article/editArticle'),
+        meta: {auth: true},
+
+      },
+      {
+        path:'/article/Catalog',
+        name: 'Catalog',
+        component: () => import('@/components/views/Article/Catalog'),
+        meta: {auth: true}
+      }
+    ]
   }
 ]

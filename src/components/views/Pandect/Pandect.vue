@@ -4,7 +4,9 @@
       <div>
         <h1>One Belt, One Road</h1>
         <p>Thoughts, stories and ideas.</p>
-        <p><el-button  type="info" >写文章</el-button></p>
+        <p>
+          <el-button type="info">写文章</el-button>
+        </p>
       </div>
     </div>
     <div class="pandect-content">
@@ -22,7 +24,10 @@
           </ul>
         </div>
       </div>
-      <div id="myChart"></div>
+      <div id="myChart">
+        <div class="box1"></div>
+        <div class="box2"></div>
+      </div>
     </div>
   </div>
 </template>
@@ -91,10 +96,96 @@
     },
     methods: {
       drawLine() {
-        console.log("this.$echarts：", this.$echarts)
-        let chart = document.getElementById("myChart")
-        let myChart = this.$echarts.init(chart)
-        myChart.setOption(this.option)
+          let $ = document.querySelectorAll.bind(document)
+        let oLeft = $(".box1")[0]
+        console.log('oLeft：', oLeft)
+        let oRight = $(".box2")[0]
+        let datas = [
+          {
+            name: "湖南",
+            value: 1675,
+            citys: [
+              {name: "长沙", value: 816},
+              {name: "潭州", value: 435},
+              {name: "桃园", value: 424}
+            ]
+          },
+          {
+            name: "山东",
+            value: 1354,
+            citys: [
+              {name: "济南", value: 615},
+              {name: "临沂", value: 443},
+              {name: "德州", value: 296}
+            ]
+          },
+          {
+            name: "东北",
+            value: 374,
+            citys: [
+              {name: "黑龙江", value: 112},
+              {name: "牡丹江", value: 65},
+              {name: "漠河", value: 197}
+            ]
+          }
+        ]
+        //左边——省份
+        let option = {
+          title: {
+            text: "省份数据"
+          },
+          series: [
+            {
+              name: "省数据",
+              type: "pie",
+              radius: "50%",
+              data: datas.map(json => ({name: json.name, value: json.value}))
+            }
+          ]
+        }
+
+        let chart = this.$echarts.init(oLeft)
+        let chart2 = this.$echarts.init(oRight)
+        chart.setOption(option)
+        let that = this
+        chart.on("mouseover", function (ev) {
+          that.setCity(ev.name, chart2, datas)
+        })
+        that.setCity(datas[0].name, chart2, datas)
+
+      },
+      setCity(name, chart2, datas) {
+        let data = null
+        datas.forEach(json => {
+          if (json.name == name) {
+            data = json
+          }
+        })
+
+        let option = {
+          title: {
+            text: `${name}省`
+          },
+          xAxis: [
+            {
+              type: "category",
+              data: data.citys.map(city => city.name)
+            }
+          ],
+          yAxis: [
+            {
+              type: "value"
+            }
+          ],
+          series: [
+            {
+              name: "city",
+              type: "bar",
+              data: data.citys.map(city => city.value)
+            }
+          ]
+        }
+        chart2.setOption(option)
       }
     },
     activated() {
@@ -120,12 +211,15 @@
       height: 400px;
       text-align: center;
       background-color: #eeeeee;
-      >div{
-          margin: 100px auto;
-        h1{
+
+      > div {
+        margin: 100px auto;
+
+        h1 {
           font-size: 34px;
         }
-        p{
+
+        p {
           font-size: 20px;
           line-height: 40px;
         }
@@ -146,11 +240,13 @@
 
         .panel {
           width: 100%;
+
           .panel-heading {
             padding-left: 15px;
             border-bottom: 1px solid #ccc;
             line-height: 40px;
             height: 40px;
+
             .panel-title {
               font-size: 18px;
               color: #303133;
@@ -163,13 +259,15 @@
             background-color: #fff;
             border-bottom-right-radius: 15px;
             border-bottom-left-radius: 15px;
+
             .list-group-item {
               padding-left: 15px;
               list-style: none;
               border-bottom: 1px solid #ccc;
               line-height: 40px;
               height: 40px;
-              &:last-child{
+
+              &:last-child {
                 border: none;
               }
             }
@@ -180,9 +278,15 @@
       }
 
       #myChart {
-        float: right;
+        float: left;
         width: 60%;
         height: 100%;
+
+        .box1, .box2 {
+          width: 50%;
+          height: 500px;
+          float: left
+        }
       }
     }
 
