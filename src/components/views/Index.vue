@@ -91,6 +91,7 @@
 </template>
 <script>
   import { mapMutations } from 'vuex'
+  import {postRequest} from "../../api/api"
   export default {
     name: "idnex",
     watch: {
@@ -193,7 +194,7 @@
         let obj = {}
         console.log(this.routerHistory)
         this.routerHistory.map(history =>{
-          if( this.routeTab  == history.name){
+          if( this.routeTab  === history.name){
             obj = history
           }
       })
@@ -202,10 +203,10 @@
         }
       },
       outLogin(){
-        // 删除 token
-        localStorage.removeItem('token');
-        // 跳转到登录页面
-        this.$router.push({path:'/login'})
+        postRequest('user/do-logout',{}).then(res =>{
+          console.log('res：', res)
+        })
+
       }
       ,
       ...mapMutations(['setToken'])

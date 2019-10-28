@@ -63,8 +63,8 @@
               localStorage.setItem("token", res.data.token) // 缓存至本地
               this.$store.commit("setToken", res.data.token) // 存入store
               console.log('this.$route.query.redirect：', this.$route.query.redirect)
-              // 回跳
               const redirect = this.$route.query.redirect || "/"
+              console.log('redirect：', redirect)
               this.$router.push(redirect)
             } else {
               // 登录失败
@@ -73,7 +73,6 @@
                 message: res.message,
                 type: 'error'
               })
-              console.log("登录失败")
             }
           })
         }
@@ -86,16 +85,14 @@
               if (res.error === 0) {
                 this.userMessage =DeepCopy(res.data[0])
                 this.circleUrl =  '/zsw'+this.userMessage.avatar
-                this.$forceUpdate()
               } else {
                 console.log('res：', res.error)
                 this.circleUrl = "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png?a"+ Date.now()
-                this.$forceUpdate()
               }
           })
           .catch(err => {
             if (err) {
-              console.log(err)
+              this.circleUrl = "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png?a"+ Date.now()
             }
           })
       }

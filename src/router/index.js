@@ -16,7 +16,6 @@ VueRouter.prototype.goBack =  function(){
 
 console.log('RouterConfig.concat(CommonRouters)：', RouterConfig.concat(CommonRouters))
 let router = new VueRouter({
-  mode: 'history',// 需要服务端支持
   scrollBehavior: () => ({ y: 0 }),
   routes: RouterConfig.concat(CommonRouters)
 })

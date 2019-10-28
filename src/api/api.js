@@ -22,10 +22,9 @@ export function getRequest(url, params){
  * @param {String} url [请求的url地址]
  * @param {Object} params [请求时携带的参数]
  */
-export function postRequest(url, params) {
+export function postRequest(url, params ={}) {
   url = 'zsw/'+url
     return new Promise((resolve, reject) => {
-        console.log(JSON.stringify(params))
          axios.post(url, JSON.stringify(params))
         .then(res => {
             resolve(res.data);

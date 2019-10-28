@@ -4,7 +4,7 @@ Vue.use(Vuex)
 
 let store = new Vuex.Store({
     state:{
-        token:localStorage.getItem('token') || ''
+        token:JSON.parse(localStorage.getItem('token'))|| null
     },
     mutations:{
         setToken(state,token){
@@ -23,7 +23,6 @@ let store = new Vuex.Store({
 // 订阅store变化
 store.subscribe((mutation, state) => {
   if(mutation.type === 'setToken'){
-    console.log('000：')
     localStorage.setItem("token", JSON.stringify(state.token));
   }
 });

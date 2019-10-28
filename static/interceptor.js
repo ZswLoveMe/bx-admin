@@ -23,6 +23,7 @@ axios.interceptors.response.use(response => {
     console.log(response)
     if (response.status === 200) {
         if (response.data.error === -1) {
+          console.log('111：', 111)
             clearHandler()
         }
         return Promise.resolve(response);
@@ -86,6 +87,7 @@ function clearHandler() {
     // 清空缓存
     store.commit("setToken", "");
     localStorage.removeItem("token");
+    console.log('router.currentRoute.path：', router.currentRoute.path)
     // 跳转至登录页
     router.push({
         path: "/login",
