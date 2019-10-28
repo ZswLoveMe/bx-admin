@@ -90,6 +90,7 @@
   </div>
 </template>
 <script>
+  import { mapMutations } from 'vuex'
   export default {
     name: "idnex",
     watch: {
@@ -201,9 +202,13 @@
         }
       },
       outLogin(){
-        outLogin()
+        // 删除 token
+        localStorage.removeItem('token');
+        // 跳转到登录页面
+        this.$router.push({path:'/login'})
       }
-
+      ,
+      ...mapMutations(['setToken'])
     },
     created() {
       //页面加载跳转到当前页面

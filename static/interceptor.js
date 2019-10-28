@@ -4,18 +4,7 @@ import router from '../src/router'
 
 axios.defaults.timeout = 10000
 
-axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
-// let apis = []
-// const files = require.context('./api', true, /\.js$/);
-//
-// files.keys().forEach(key => {
-//
-//   for (let apiKey in files(key).default) {
-//     apis[apiKey] = files(key).default[apiKey]
-//   }
-// })
-// console.log('apis：', apis)
-//
+axios.defaults.headers.post['Content-Type'] = 'application/json;charset=UTF-8';
 
 axios.interceptors.request.use(config => {
     if (store.state.token) {
@@ -32,9 +21,8 @@ axios.interceptors.request.use(config => {
 
 axios.interceptors.response.use(response => {
     console.log(response)
-    if (response.status == 200) {
-        console.log(response.data.code)
-        if (response.data.code == -1) {
+    if (response.status === 200) {
+        if (response.data.error === -1) {
             clearHandler()
         }
         return Promise.resolve(response);
@@ -98,7 +86,6 @@ function clearHandler() {
     // 清空缓存
     store.commit("setToken", "");
     localStorage.removeItem("token");
-
     // 跳转至登录页
     router.push({
         path: "/login",

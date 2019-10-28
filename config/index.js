@@ -11,13 +11,13 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-     // '/zsw': {
-        //target: 'http://192.168.137.190:8088/travel',
-       // changeOrigin: true,
-       // pathRewrite: {
-        //  '^/zsw': '/'
-        //}
-     // }
+     '/zsw': {
+        target: 'http://localhost:8888/',
+       changeOrigin: true,
+       pathRewrite: {
+         '^/zsw': '/'
+        }
+     }
     },
 
     // Various Dev Server settings

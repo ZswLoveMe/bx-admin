@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import GlobalService from "@/services/global";
 Vue.use(Vuex)
 
 let store = new Vuex.Store({
@@ -13,7 +12,6 @@ let store = new Vuex.Store({
         }
     },
     actions: {
-
     },
     getters:{
         isLogoin:state =>{
@@ -24,7 +22,8 @@ let store = new Vuex.Store({
 
 // 订阅store变化
 store.subscribe((mutation, state) => {
-  if(mutation.type == 'setToken'){
+  if(mutation.type === 'setToken'){
+    console.log('000：')
     localStorage.setItem("token", JSON.stringify(state.token));
   }
 });

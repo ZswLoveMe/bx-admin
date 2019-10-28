@@ -25,6 +25,7 @@ let router = new VueRouter({
 router.beforeEach((to,from,next) => {
   if (to.meta.auth) { // 查看路由是否需要登录
     // 需要认证，则检查令牌
+    console.log('store.state.token：', store.state.token)
     if (store.state.token) { // 已登录
       next();
     } else {// 去登陆

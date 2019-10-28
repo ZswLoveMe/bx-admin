@@ -5,9 +5,9 @@ import axios from 'axios'
  * @param {String} url [请求的url地址]
  * @param {Object} params [请求时携带的参数]
  */
-export function get(url, params){
+export function getRequest(url, params){
+   url = 'zsw/'+url
     return new Promise((resolve, reject) =>{
-      console.log('url：', url)
         axios.get(url, {
             params: params
         }).then(res => {
@@ -22,7 +22,8 @@ export function get(url, params){
  * @param {String} url [请求的url地址]
  * @param {Object} params [请求时携带的参数]
  */
-export function post(url, params) {
+export function postRequest(url, params) {
+  url = 'zsw/'+url
     return new Promise((resolve, reject) => {
         console.log(JSON.stringify(params))
          axios.post(url, JSON.stringify(params))

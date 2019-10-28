@@ -113,7 +113,6 @@
   import SearchInputBtn from "../../../ui/components/SearchInputBtn"
   import Pagination from "../../../ui/components/Pagination"
   import {formatDate} from '@/utils/formatDate'
-  import {pageQuery} from "../../../api/atomTestApi/atom"
 
   export default {
     name: "AllArticle",
@@ -202,9 +201,6 @@
           currentPage:this.pageIndex,
           cid:5,
         }
-        pageQuery(params).then(res =>{
-          this.total  = res.totalCount
-        })
       }
     },
     activated() {

@@ -46,80 +46,80 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     watchOptions: {
       poll: config.dev.poll,
     },
-    before(app){
-      app.use(function(req, res, next) {
-        // 检查token
-        if (/^\/api/.test(req.path)) {
-          // 之校验/api开头的请求
-          console.log("token:" + req.headers.token);
-          if (req.path == "/api/login" || req.headers.token) {
-            next();
-          } else {
-            res.sendStatus(401); // 错误状态提示用户需要登录
-          }
-        } else {
-          next();
-        }
-      });
-
-      app.get('/test/loadAvatar',(req,res)=>{
-        const {email} = req.query
-        if(email == 'zsw123'){
-          res.json({
-            code:0,
-            avatarUrl:'/static/img/avatar_1.jpg'
-          })
-        }else{
-          res.json({
-            code:3,
-          })
-        }
-      })
-
-      app.post("/api/login", function(req, res) {
-        console.log("用户登录");
-        let body = [];
-        req
-          .on("data", chunk => {
-            // 接收到一部分数据
-            console.log(chunk); //chunk是Buffer对象
-            body.push(chunk);
-          })
-          .on("end", () => {
-            // 数据接收完毕
-            // 将body转换为完整的buffer
-            body = Buffer.concat(body).toString();
-            // 转换并保存前台传递的user
-            const { email, password } = JSON.parse(body); //{name:'aaa',age:20}
-            if (email === "zsw123" && password === "123123") {
-              res.json({
-                code: 0,
-                token: "jilei",
-                avatar:'/static/img/avatar_1.jpg'
-              });
-            } else {
-              res.json({
-                code: 1,
-                message: "用户名或密码错误"
-              });
-            }
-          });
-      });
-      let menuList = [
-        {
-          label:'仪表盘',
-          id:'1',
-        }
-      ]
-      app.get('/api/menus',(req,res) =>{
-        res.json({
-
-        })
-      })
-      app.get("/api/logout", function(req, res) {
-        res.json({ code: -1 });
-      });
-    }
+    // before(app){
+    //   app.use(function(req, res, next) {
+    //     // 检查token
+    //     if (/^\/api/.test(req.path)) {
+    //       // 之校验/api开头的请求
+    //       console.log("token:" + req.headers.token);
+    //       if (req.path == "/api/login" || req.headers.token) {
+    //         next();
+    //       } else {
+    //         res.sendStatus(401); // 错误状态提示用户需要登录
+    //       }
+    //     } else {
+    //       next();
+    //     }
+    //   });
+    //
+    //   app.get('/test/loadAvatar',(req,res)=>{
+    //     const {email} = req.query
+    //     if(email == 'zsw123'){
+    //       res.json({
+    //         code:0,
+    //         avatarUrl:'/static/img/avatar_1.jpg'
+    //       })
+    //     }else{
+    //       res.json({
+    //         code:3,
+    //       })
+    //     }
+    //   })
+    //
+    //   app.post("/api/login", function(req, res) {
+    //     console.log("用户登录");
+    //     let body = [];
+    //     req
+    //       .on("data", chunk => {
+    //         // 接收到一部分数据
+    //         console.log(chunk); //chunk是Buffer对象
+    //         body.push(chunk);
+    //       })
+    //       .on("end", () => {
+    //         // 数据接收完毕
+    //         // 将body转换为完整的buffer
+    //         body = Buffer.concat(body).toString();
+    //         // 转换并保存前台传递的user
+    //         const { email, password } = JSON.parse(body); //{name:'aaa',age:20}
+    //         if (email === "zsw123" && password === "123123") {
+    //           res.json({
+    //             code: 0,
+    //             token: "jilei",
+    //             avatar:'/static/img/avatar_1.jpg'
+    //           });
+    //         } else {
+    //           res.json({
+    //             code: 1,
+    //             message: "用户名或密码错误"
+    //           });
+    //         }
+    //       });
+    //   });
+    //   let menuList = [
+    //     {
+    //       label:'仪表盘',
+    //       id:'1',
+    //     }
+    //   ]
+    //   app.get('/api/menus',(req,res) =>{
+    //     res.json({
+    //
+    //     })
+    //   })
+    //   app.get("/api/logout", function(req, res) {
+    //     res.json({ code: -1 });
+    //   });
+    // }
   },
   plugins: [
     new webpack.DefinePlugin({

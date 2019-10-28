@@ -20,7 +20,9 @@
 </template>
 
 <script>
-  import GlobalService from "@/services/global";
+  import {getRequest} from "@/api/api";
+  import {DeepCopy} from "../../../supplier-web/src/jxzj-ui/utils/tool"
+  import {postRequest} from "../api/api"
   export default {
     name: "Login",
     data() {
@@ -33,13 +35,14 @@
         loginRules: {
           email: [
             {required: true, message: "请输入用户名/邮箱", trigger: "blur"},
-            {min: 6, max: 24, message: "长度在 6 到 24 个字符", trigger: "blur"}
+            {min: 3, max: 24, message: "长度在 3 到 24 个字符", trigger: "blur"}
           ],
           password: [
             {required: true, message: "请输入密码", trigger: "blur"},
             {min: 6, max: 12, message: "长度在 6 到 12 个字符", trigger: "blur"}
           ]
-        }
+        },
+        userMessage:null
       }
     },
     methods: {
@@ -53,12 +56,13 @@
           }
         })
         if (valid) {
-          GlobalService.userLogin(this.loginForm).then(res => {
-            const {code, token, message} = res.data
-            if (code == 0) {
+          postRequest('user/do-login',this.loginForm).then(res => {
+            console.log('res：', res)
+            if (res.error === 0) {
               // 登录成功
-              localStorage.setItem("token", token) // 缓存至本地
-              this.$store.commit("setToken", token) // 存入store
+              localStorage.setItem("token", res.data.token) // 缓存至本地
+              this.$store.commit("setToken", res.data.token) // 存入store
+              console.log('this.$route.query.redirect：', this.$route.query.redirect)
               // 回跳
               const redirect = this.$route.query.redirect || "/"
               this.$router.push(redirect)
@@ -76,18 +80,18 @@
       },
       loaderAvatar() {
         if (this.loginForm.email.trim() === "") return
-        GlobalService.loadAvatar({email: this.loginForm.email})
+        let prams = {email: this.loginForm.email}
+        getRequest('user/get-portrait',prams)
           .then(res => {
-            res =res.data
-            if (res) {
-              if (res.code == 3) {
-                console.log(111)
-                this.circleUrl =
-                  "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png"
+              if (res.error === 0) {
+                this.userMessage =DeepCopy(res.data[0])
+                this.circleUrl =  '/zsw'+this.userMessage.avatar
+                this.$forceUpdate()
               } else {
-                this.circleUrl = res.avatarUrl
+                console.log('res：', res.error)
+                this.circleUrl = "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png?a"+ Date.now()
+                this.$forceUpdate()
               }
-            }
           })
           .catch(err => {
             if (err) {
