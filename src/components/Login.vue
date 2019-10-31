@@ -23,6 +23,7 @@
   import {getRequest} from "@/api/api";
   import {DeepCopy} from "../../../supplier-web/src/jxzj-ui/utils/tool"
   import {postRequest} from "../api/api"
+  import { mapActions } from 'vuex'
   export default {
     name: "Login",
     data() {
@@ -60,11 +61,9 @@
             console.log('res：', res)
             if (res.error === 0) {
               // 登录成功
-              localStorage.setItem("token", res.data.token) // 缓存至本地
               this.$store.commit("setToken", res.data.token) // 存入store
-              console.log('this.$route.query.redirect：', this.$route.query.redirect)
+              this.$store.dispatch('recordUser',{userInfo:this.userMessage})
               const redirect = this.$route.query.redirect || "/"
-              console.log('redirect：', redirect)
               this.$router.push(redirect)
             } else {
               // 登录失败
@@ -98,6 +97,7 @@
       }
     }
   }
+
 </script>
 
 <style scoped lang="scss">

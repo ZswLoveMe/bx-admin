@@ -14,7 +14,6 @@
             </el-form-item>
           </div>
           <el-form-item>
-            <zsw-rich-text :value="articleFrom.value" :settingHeight="height" :tinymce="tinymce"></zsw-rich-text>
           </el-form-item>
         </div>
         <div class="right-content">
@@ -74,7 +73,6 @@
     name: "EditArticle",
     data() {
       return {
-        tinymce: "edit-article-zsw",
         height: 600,
         articleFrom: {
           value: "",

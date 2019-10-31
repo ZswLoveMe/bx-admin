@@ -5,9 +5,9 @@
         <div class="main-menu">
           <div class="main-nav-logo">
             <div class="logo">
-              <el-avatar :size="100" :src="navLogo"></el-avatar>
+              <el-avatar :size="100" :src=" '/zsw'+userInfo.avatar"></el-avatar>
             </div>
-            <span class="user-name">霹雳火 * 刘美</span>
+            <span class="user-name">{{userInfo.email}}</span>
           </div>
           <ul>
             <li v-for="(item,index) in menuList" :key="item.id" @click="openMenu(item)">
@@ -90,18 +90,18 @@
   </div>
 </template>
 <script>
-  import { mapMutations } from 'vuex'
   import {postRequest} from "../../api/api"
+
   export default {
     name: "idnex",
     watch: {
       $route(route) {
-        this.$routerHistory._history.map(item =>{
+        this.$routerHistory._history.map(item => {
           this.routerCacheArr.push(item.name)
         })
-        this.routerCacheArr =[...new Set(this.routerCacheArr)]
+        this.routerCacheArr = [...new Set(this.routerCacheArr)]
         this.routerHistory = this.$routerHistory._history
-        this.routeTab =route.name
+        this.routeTab = route.name
       }
     },
     data() {
@@ -111,17 +111,20 @@
           {
             label: "文章",
             id: 2,
-            value:'Article',
-            children: [{label: "所有文章", id: "22", parentId: 2,value:'AllArticle'}, {label: "写文章", id: "21", parentId: 2,value:'EditArticle'}, {
-              label: "分类目录",
-              id: "23",
-              parentId: 2,
-              value:'Catalog'
-            }]
+            value: "Article",
+            children: [
+              {label: "所有文章", id: "22", parentId: 2, value: "AllArticle"},
+              {label: "写文章", id: "21", parentId: 2, value: "EditArticle"},
+              {label: "分类目录", id: "23", parentId: 2, value: "Catalog"}
+              ]
           },
           {label: "评论", id: 3, value: "Comment"},
           {label: "用户", id: 4, value: "User"},
-          {label: "设置", id: 5, children: [{label: "导航菜单", id: 51, parentId: 5}, {label: "图片轮播", id: 52, parentId: 5}]}
+          {label: "设置", id: 5, children: [
+            {label: "导航菜单", id: 51, parentId: 5},
+            {label: "图片轮播", id: 52, parentId: 5}
+            ]
+          }
         ],
         subTitle: "",
         subMenuList: [],
@@ -130,13 +133,14 @@
         tags: [],
         routerHistory: [],
         /*需要缓存数据的页面*/
-        routerCacheArr: ['Pandect'],
-        routeTab: "Comment"
+        routerCacheArr: ["Pandect"],
+        routeTab: "Comment",
+        userInfo: {}
       }
     },
     methods: {
-      openSubMenu(sub){
-        console.log('sub：', sub)
+      openSubMenu(sub) {
+        console.log("sub：", sub)
       },
       openMenu(item) {
         //如果有子项就打开子项 如果没有子项 跳转到对应窗口
@@ -148,8 +152,7 @@
           }.bind(this), 200)
         } else {
           this.subMenuFlag = false
-          console.log(item)
-          if(item.parentId){
+          if (item.parentId) {
             this.subMenuFlag = true
           }
           this.$router.push({name: item.value, params: {label: item.label}})
@@ -159,66 +162,67 @@
         this.$router.push({name: "Pandect", params: {label: "总览"}})
       },
       removeTab(targetName) {
-        if( this.routerHistory.length >= 1){
+        if (this.routerHistory.length >= 1) {
           //删除历史记录  回退到上一级
           let tabs = this.routerHistory
           let activeTab = this.routeTab
           let params = {}
-          let lastParams ={}
-          if (activeTab ===  targetName) {
-            tabs.forEach((tab,index) => {
+          let lastParams = {}
+          if (activeTab === targetName) {
+            tabs.forEach((tab, index) => {
               if (tab.name === targetName) {
                 params = tab
-                let nextTab = tabs[index + 1] || tabs[index - 1];
+                let nextTab = tabs[index + 1] || tabs[index - 1]
                 if (nextTab) {
                   lastParams = nextTab
-                  activeTab = nextTab.name;
+                  activeTab = nextTab.name
                 }
               }
-            } )
+            })
           }
-          this.routeTab = activeTab;
-          this.routerHistory = tabs.filter(tab => tab.name !== targetName);
+          this.routeTab = activeTab
+          this.routerHistory = tabs.filter(tab => tab.name !== targetName)
           this.$routerHistory.pop(params)
           setTimeout(function () {
-            if(this.routerHistory.length == 0 ){
+            if (this.routerHistory.length === 0) {
               this.toPandect()
-            }else{
-              this.$router.push({name:lastParams.name, params: {label: lastParams.label}})
+            } else {
+              this.$router.push({name: lastParams.name, params: {label: lastParams.label}})
             }
-          }.bind(this),200)
+          }.bind(this), 200)
         }
 
       },
       clickTab() {
         let obj = {}
         console.log(this.routerHistory)
-        this.routerHistory.map(history =>{
-          if( this.routeTab  === history.name){
+        this.routerHistory.map(history => {
+          if (this.routeTab === history.name) {
             obj = history
           }
-      })
-        if(obj){
+        })
+        if (obj) {
           this.$router.push({name: this.routeTab, params: obj})
         }
       },
-      outLogin(){
-        postRequest('user/do-logout',{}).then(res =>{
-          console.log('res：', res)
+      outLogin() {
+        postRequest("user/do-logout", {}).then(res => {
+          this.$store.dispatch("recordUser", {})
+          this.$store.dispatch("setToken", "")
         })
 
       }
-      ,
-      ...mapMutations(['setToken'])
+
     },
     created() {
+      this.userInfo = this.$store.state.userInfo
       //页面加载跳转到当前页面
       this.$nextTick(() => {
         this.toPandect()
-
       })
     },
     mounted() {
+
     }
   }
 </script>

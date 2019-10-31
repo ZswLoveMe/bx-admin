@@ -18,14 +18,13 @@
           <ul class="list-group">
             <li class="list-group-item"><strong>{{this.contentStatistics.countArticle.article}}</strong>篇文章（<strong>{{this.contentStatistics.countArticle.draft}}</strong>篇草稿）
             </li>
-            <li class="list-group-item"><strong>{{this.contentStatistics.count}}</strong>个分类</li>
+            <li class="list-group-item"><strong>{{this.contentStatistics.classifyCount.count}}</strong>个分类</li>
             <li class="list-group-item"><strong>{{this.contentStatistics.comment.commentCount}}</strong>条评论（<strong>{{this.contentStatistics.comment.toAudit}}</strong>条待审核）
             </li>
           </ul>
         </div>
       </div>
       <div id="myChart">
-        <div class="box1"></div>
         <div class="box2"></div>
       </div>
     </div>
@@ -34,6 +33,9 @@
 
 <script>
 
+
+  import {postRequest} from "../../../api/api"
+  import {DeepCopy} from "../../../../../supplier-web/src/jxzj-ui/utils/tool"
 
   export default {
     name: "Pandect",
@@ -55,9 +57,9 @@
             bottom: 20,
             data: ["文章", "分类", "评论"],
             selected: {
-              文章: true,
-              分类: true,
-              评论: true
+              '文章': true,
+              '分类': true,
+              '评论': true
             }
           },
           series: [
@@ -67,9 +69,9 @@
               radius: "65%",
               center: ["40%", "50%"],
               data: [
-                {name: "文章", value: 12},
-                {name: "分类", value: 11},
-                {name: "评论", value: 23}
+                {name: "文章", value: 0},
+                {name: "分类", value: 0},
+                {name: "评论", value: 0}
               ],
               itemStyle: {
                 emphasis: {
@@ -83,13 +85,13 @@
         },
         contentStatistics: {
           countArticle: {
-            article: 995,
-            draft: 226
+            article: 0,
+            draft: 0
           },
-          classifyCount: {count: 4},
+          classifyCount: {count:0},
           comment: {
-            commentCount: 7,
-            toAudit: 4
+            commentCount: 0,
+            toAudit: 0
           }
         }
       }
@@ -97,62 +99,65 @@
     methods: {
       drawLine() {
           let $ = document.querySelectorAll.bind(document)
-        let oLeft = $(".box1")[0]
-        console.log('oLeft：', oLeft)
         let oRight = $(".box2")[0]
-        let datas = [
-          {
-            name: "湖南",
-            value: 1675,
-            citys: [
-              {name: "长沙", value: 816},
-              {name: "潭州", value: 435},
-              {name: "桃园", value: 424}
-            ]
-          },
-          {
-            name: "山东",
-            value: 1354,
-            citys: [
-              {name: "济南", value: 615},
-              {name: "临沂", value: 443},
-              {name: "德州", value: 296}
-            ]
-          },
-          {
-            name: "东北",
-            value: 374,
-            citys: [
-              {name: "黑龙江", value: 112},
-              {name: "牡丹江", value: 65},
-              {name: "漠河", value: 197}
-            ]
-          }
-        ]
+        console.log('this.contentStatistics.countArticle.article：', this.contentStatistics)
+        this.option.series[0].data[0].value = this.contentStatistics.countArticle.article
+        this.option.series[0].data[1].value = this.contentStatistics.classifyCount.count
+        this.option.series[0].data[2].value = this.contentStatistics.comment.commentCount
+        let chart = this.$echarts.init(oRight)
+        chart.setOption(this.option)
+        // let oRight = $(".box2")[0]
+        // let datas = [
+        //   {
+        //     name: "文章",
+        //     value: 1675,
+        //     citys: [
+        //       {name: "长沙", value: 816},
+        //       {name: "潭州", value: 435},
+        //       {name: "桃园", value: 424}
+        //     ]
+        //   },
+        //   {
+        //     name: "山东",
+        //     value: 1354,
+        //     citys: [
+        //       {name: "济南", value: 615},
+        //       {name: "临沂", value: 443},
+        //       {name: "德州", value: 296}
+        //     ]
+        //   },
+        //   {
+        //     name: "东北",
+        //     value: 374,
+        //     citys: [
+        //       {name: "黑龙江", value: 112},
+        //       {name: "牡丹江", value: 65},
+        //       {name: "漠河", value: 197}
+        //     ]
+        //   }
+        // ]
         //左边——省份
-        let option = {
-          title: {
-            text: "省份数据"
-          },
-          series: [
-            {
-              name: "省数据",
-              type: "pie",
-              radius: "50%",
-              data: datas.map(json => ({name: json.name, value: json.value}))
-            }
-          ]
-        }
+        // let option = {
+        //   title: {
+        //     text: "站点统计"
+        //   },
+        //   series: [
+        //     {
+        //       name: "省数据",
+        //       type: "pie",
+        //       radius: "50%",
+        //       data: datas.map(json => ({name: json.name, value: json.value}))
+        //     }
+        //   ]
+        // }
 
-        let chart = this.$echarts.init(oLeft)
-        let chart2 = this.$echarts.init(oRight)
-        chart.setOption(option)
-        let that = this
-        chart.on("mouseover", function (ev) {
-          that.setCity(ev.name, chart2, datas)
-        })
-        that.setCity(datas[0].name, chart2, datas)
+        // let chart2 = this.$echarts.init(oRight)
 
+        // let that = this
+        // chart.on("mouseover", function (ev) {
+        //   that.setCity(ev.name, chart2, datas)
+        // })
+        // that.setCity(datas[0].name, chart2, datas)
       },
       setCity(name, chart2, datas) {
         let data = null
@@ -188,7 +193,16 @@
         chart2.setOption(option)
       }
     },
-    activated() {
+  async  activated() {
+      // 获取站点统计类容
+     await postRequest('pandect/content').then(res =>{
+        let contentStatistics = res.data.contentStatistics
+       Object.keys(this.contentStatistics).forEach(key =>{
+         console.log('key：',key )
+         this.contentStatistics[key] = DeepCopy(contentStatistics[key])
+       })
+      })
+    console.log('this.contentStatistics：', this.contentStatistics)
       this.$nextTick(() => {
         this.drawLine()
       })
@@ -282,10 +296,10 @@
         width: 60%;
         height: 100%;
 
-        .box1, .box2 {
-          width: 50%;
+       .box2 {
+          width: 60%;
           height: 500px;
-          float: left
+          float: right
         }
       }
     }

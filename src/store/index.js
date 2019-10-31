@@ -1,32 +1,25 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import state from './state'
+import mutations from './mutations'
+import actions from './actions'
+import getters from './getters'
 Vue.use(Vuex)
 
 let store = new Vuex.Store({
-    state:{
-        token:JSON.parse(localStorage.getItem('token'))|| null
-    },
-    mutations:{
-        setToken(state,token){
-            state.token = token
-        }
-    },
-    actions: {
-    },
-    getters:{
-        isLogoin:state =>{
-            return !!state.token
-        }
-    }
+  state,
+  mutations,
+  actions,
+  getters
 })
 
 // 订阅store变化
 store.subscribe((mutation, state) => {
-  if(mutation.type === 'setToken'){
-    localStorage.setItem("token", JSON.stringify(state.token));
+  console.log('mutation：', mutation)
+  if (mutation.type === "setToken") {
+    localStorage.setItem("token", JSON.stringify(state.token))
   }
-});
-
+})
 
 
 export default store
