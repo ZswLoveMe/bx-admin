@@ -6,25 +6,25 @@
       </div>
     </el-header>
     <div class="EditArticle">
-      <el-form :model="articleFrom">
+      <el-form :model="articleFrom" label-position="top">
         <div class="left-content">
           <div class="left-title">
             <el-form-item label="标题:">
               <el-input v-model="articleFrom.title"></el-input>
             </el-form-item>
           </div>
-          <el-form-item>
+          <el-form-item label="内容:">
+            <zsw-richText v-model="articleFrom.content" :settingHeight="600" tinymce="tinymce"></zsw-richText>
           </el-form-item>
         </div>
         <div class="right-content">
           <el-form-item label="别名:">
-            <el-input placeholder="别名"></el-input>
+            <el-input placeholder="别名" v-model="articleFrom.slug"></el-input>
           </el-form-item>
-
           <el-form-item label="特色图像:">
             <el-upload
               class="upload-demo"
-              action="https://jsonplaceholder.typicode.com/posts/"
+              action="zsw/upload/uploadImage"
               :on-remove="handleRemove"
               :on-success="handleSuccess"
               :limit="1"
@@ -34,9 +34,8 @@
               <el-button size="small" type="primary">点击上传</el-button>
             </el-upload>
           </el-form-item>
-
           <el-form-item label="状态:">
-            <el-select v-model="articleFrom.statusValue" placeholder="请选择">
+            <el-select v-model="articleFrom.status" placeholder="请选择">
               <el-option
                 v-for="item in statusOptions"
                 :key="item.value"
@@ -47,13 +46,13 @@
           </el-form-item>
           <el-form-item label="发布时间:"><br>
             <el-date-picker
-              v-model="articleFrom.date"
+              v-model="articleFrom.created"
               type="date"
               placeholder="选择日期">
             </el-date-picker>
           </el-form-item>
           <el-form-item label="所属分类:">
-            <el-select v-model="articleFrom.categoryValue" placeholder="请选择">
+            <el-select v-model="articleFrom.categoryId" placeholder="请选择">
               <el-option
                 v-for="item in categoryOptions"
                 :key="item.value"
@@ -62,6 +61,8 @@
               </el-option>
             </el-select>
           </el-form-item>
+          <el-button type="primary" size="medium" @click="saveArticle" v-if="saveBtn">保存</el-button>
+          <el-button type="primary" size="medium" @click="editArticle" v-else>保存</el-button>
         </div>
       </el-form>
     </div>
@@ -69,18 +70,23 @@
 </template>
 
 <script>
+  import {postRequest} from "../../../api/api"
+
   export default {
     name: "EditArticle",
+    inject: ["routerClick"],
     data() {
       return {
+        saveBtn: true,
         height: 600,
         articleFrom: {
-          value: "",
+          content: "",
           title: "",
           fileList: [],
-          statusValue: "allstate",
-          date:'',
-          categoryValue:0
+          created: null,
+          status: "allstate",
+          slug: "",
+          categoryId: 0
         },
         categoryOptions: [
           {
@@ -129,15 +135,76 @@
         console.log(file, fileList)
         this.articleFrom.fileList.splice(0, 1)
       },
-
       handleSuccess(response, file, fileList) {
-        console.log(file)
+        file.key = response.data.key
         this.articleFrom.fileList.push(file)
       },
       handleExceed(files, fileList) {
-        this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`)
-      }
+        this.$message.warning(`最多选择一张图片`)
+      },
+      editArticle() {
+        let params = {}
+        let falg = true
+        Object.keys(this.articleFrom).forEach(key => {
+          if (falg) {
+            if (this.articleFrom[key] === null || this.articleFrom[key] === "" || this.articleFrom[key].legend === 0 || this.articleFrom[key] === undefined) {
+              this.$message("请先完善信息")
+              falg = false
+            }
+            if (key === "fileList") {
+              params.feature = this.articleFrom[key][0].key
+              return
+            }
+            params[key] = this.articleFrom[key]
+          }
+        })
+        if (falg) {
+          let id = this.$route.params.id
+          if (id) {
+            params.id = id
+          }
+          postRequest("article/updateArticle", params).then(res => {
+            if (res.data) {
+              // 编辑成功  跳转到列表页面
+              this.$message({
+                message: "编辑成功", type: "success"
+              })
+              this.routerClick("EditArticle", "AllArticle", {label: "所有文章"})
+            }
+          })
+        }
 
+      },
+      saveArticle() {
+
+      }
+    },
+    activated() {
+      let id = this.$route.params.id
+      if (id) {
+        // 显示编辑按钮
+        this.saveBtn = false
+        postRequest("article/getArticle", {id}).then(res => {
+          Object.keys(this.articleFrom).forEach(key => {
+            if (key === "fileList") {
+              if (res.data["feature"] && res.data["feature"].startWith("http")) {
+                this.$set(this.articleFrom.fileList, 0, {
+                  url: res.data["feature"], name: res.data["title"]
+                })
+              } else {
+                this.$set(this.articleFrom.fileList, 0, {
+                  url: "zsw" + res.data["feature"], name: res.data["title"]
+                })
+              }
+            } else {
+              this.articleFrom[key] = res.data[key]
+            }
+          })
+
+        })
+      } else {
+        this.saveBtn = true
+      }
     }
   }
 </script>
@@ -169,8 +236,8 @@
             height: 120px;
           }
 
-          .tinymce {
-            flex: 1;
+          /deep/ .el-textarea > textarea {
+            height: 600px;
           }
         }
 
@@ -182,7 +249,8 @@
           /deep/ .el-select {
             position: relative;
             display: block;
-            .el-input__suffix{
+
+            .el-input__suffix {
               position: absolute;
               height: 40px;
               line-height: 120px;

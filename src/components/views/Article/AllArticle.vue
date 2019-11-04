@@ -223,7 +223,7 @@
         })
       },
       toEditArticle(row){
-        this.$router.push({name:'EditArticle', params: {label: '编辑文章'}})
+        this.$router.push({name:'EditArticle', params: {label: '编辑文章',id:row.id}})
       }
     },
     activated() {

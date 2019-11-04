@@ -39,7 +39,6 @@
       <div class="right-box">
         <!--头部面包屑-->
         <nav class="box-header">
-
           <div class="nav-left">
             <ul>
               <li class="firs-title">
@@ -51,7 +50,6 @@
                          @tab-remove="removeTab"
                          @tab-click="clickTab()"
                          closable
-
                 >
                   <el-tab-pane
                     v-for="(item, index) in routerHistory"
@@ -94,6 +92,11 @@
 
   export default {
     name: "idnex",
+    provide() {
+      return {
+        routerClick: this.routerClick
+      }
+    },
     watch: {
       $route(route) {
         this.$routerHistory._history.map(item => {
@@ -116,13 +119,14 @@
               {label: "所有文章", id: "22", parentId: 2, value: "AllArticle"},
               {label: "写文章", id: "21", parentId: 2, value: "EditArticle"},
               {label: "分类目录", id: "23", parentId: 2, value: "Catalog"}
-              ]
+            ]
           },
           {label: "评论", id: 3, value: "Comment"},
           {label: "用户", id: 4, value: "User"},
-          {label: "设置", id: 5, children: [
-            {label: "导航菜单", id: 51, parentId: 5},
-            {label: "图片轮播", id: 52, parentId: 5}
+          {
+            label: "设置", id: 5, children: [
+              {label: "导航菜单", id: 51, parentId: 5},
+              {label: "图片轮播", id: 52, parentId: 5}
             ]
           }
         ],
@@ -191,11 +195,13 @@
             }
           }.bind(this), 200)
         }
-
+        // 从缓存中删除
+        if (this.routerCacheArr.indexOf(targetName) !== -1) {
+          this.routerCacheArr.splice(this.routerCacheArr.indexOf(targetName), 1)
+        }
       },
       clickTab() {
         let obj = {}
-        console.log(this.routerHistory)
         this.routerHistory.map(history => {
           if (this.routeTab === history.name) {
             obj = history
@@ -204,6 +210,14 @@
         if (obj) {
           this.$router.push({name: this.routeTab, params: obj})
         }
+      },
+      routerClick(currentName, targetName, param) {
+        // 关闭当前页面  清除缓存
+        this.removeTab(currentName)
+        if (this.routerCacheArr.indexOf(targetName) === -1) {
+          this.routerCacheArr.push("targetName")
+        }
+        this.$router.push({name: targetName, params: param})
       },
       outLogin() {
         postRequest("user/do-logout", {}).then(res => {

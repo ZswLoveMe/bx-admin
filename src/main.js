@@ -33,6 +33,16 @@ Vue.use(ElementUI)
 
 Vue.prototype.$http = axios
 
+String.prototype.startWith=function(str){
+  let reg=new RegExp("^"+str);
+  return reg.test(this);
+}
+//测试ok，直接使用str.endWith("abc")方式调用即可
+String.prototype.endWith=function(str){
+  let reg=new RegExp(str+"$");
+  return reg.test(this);
+}
+
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
