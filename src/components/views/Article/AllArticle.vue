@@ -44,6 +44,16 @@
               width="55">
             </el-table-column>
             <el-table-column
+              label="移动"
+              width="80"
+              prop="title"
+            >
+              <template slot-scope="{row}">
+                  <el-button type="text" icon="el-icon-arrow-up" @click="handleUp(row)"></el-button>
+                  <el-button type="text" icon="el-icon-arrow-down" @click="handleDown(row)"></el-button>
+              </template>
+            </el-table-column>
+            <el-table-column
               label="标题"
               :min-width="120"
               prop="title"
@@ -181,6 +191,27 @@
 
     },
     methods: {
+      handleDown(row){
+        for (let i = 0; i < this.articleData.length; i++) {
+          if(this.articleData[i].id === row.id && this.articleData[i+1]){
+            let temp = this.articleData[i]
+            this.$set( this.articleData,i,this.articleData[i+1])
+            this.$set( this.articleData,i+1,temp)
+            return
+          }
+        }
+      },
+      handleUp(row){
+        for (let i = 0; i < this.articleData.length; i++) {
+          if(this.articleData[i].id === row.id && this.articleData[i-1]){
+            let temp = this.articleData[i]
+            this.$set( this.articleData,i,this.articleData[i-1])
+            this.$set( this.articleData,i-1,temp)
+            return
+          }
+        }
+
+      },
       handleSearch(event) {
         this.pageIndex = 1
         this.handleQuery(this.categoryValue, this.statusValue)

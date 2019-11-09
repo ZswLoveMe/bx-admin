@@ -142,28 +142,34 @@
       handleExceed(files, fileList) {
         this.$message.warning(`最多选择一张图片`)
       },
-      editArticle() {
-        let params = {}
-        let falg = true
+      verify() {
+        let obj = {
+          flag: true,
+          params: {}
+        }
         Object.keys(this.articleFrom).forEach(key => {
-          if (falg) {
+          if (obj.flag) {
             if (this.articleFrom[key] === null || this.articleFrom[key] === "" || this.articleFrom[key].legend === 0 || this.articleFrom[key] === undefined) {
               this.$message("请先完善信息")
-              falg = false
+              obj.flag = false
             }
             if (key === "fileList") {
-              params.feature = this.articleFrom[key][0].key
+              obj.params.feature = this.articleFrom[key][0].key
               return
             }
-            params[key] = this.articleFrom[key]
+            obj.params[key] = this.articleFrom[key]
           }
         })
-        if (falg) {
+        return obj
+      },
+      editArticle() {
+        let obj = this.verify()
+        if (obj.flag) {
           let id = this.$route.params.id
           if (id) {
-            params.id = id
+            obj.params.id = id
           }
-          postRequest("article/updateArticle", params).then(res => {
+          postRequest("article/updateArticle", obj.params).then(res => {
             if (res.data) {
               // 编辑成功  跳转到列表页面
               this.$message({
@@ -173,40 +179,50 @@
             }
           })
         }
-
       },
-      saveArticle() {
-
-      }
-    },
-    activated() {
-      let id = this.$route.params.id
-      if (id) {
-        // 显示编辑按钮
-        this.saveBtn = false
-        postRequest("article/getArticle", {id}).then(res => {
-          Object.keys(this.articleFrom).forEach(key => {
-            if (key === "fileList") {
-              if (res.data["feature"] && res.data["feature"].startWith("http")) {
-                this.$set(this.articleFrom.fileList, 0, {
-                  url: res.data["feature"], name: res.data["title"]
-                })
-              } else {
-                this.$set(this.articleFrom.fileList, 0, {
-                  url: "zsw" + res.data["feature"], name: res.data["title"]
-                })
-              }
-            } else {
-              this.articleFrom[key] = res.data[key]
+      async   saveArticle() {
+        let obj = this.verify()
+        if (obj.flag) {
+        await postRequest("article/addArticle", obj.params).then(res => {
+            if (res.data) {
+              // 编辑成功  跳转到列表页面
+              this.$message({
+                message: "新增成功", type: "success"
+              })
+              this.routerClick("EditArticle", "AllArticle", {label: "所有文章"})
             }
           })
+        }
+      },
+    },
+      activated() {
+        let id = this.$route.params.id
+        if (id) {
+          // 显示编辑按钮
+          this.saveBtn = false
+          postRequest("article/getArticle", {id}).then(res => {
+            Object.keys(this.articleFrom).forEach(key => {
+              if (key === "fileList") {
+                if (res.data["feature"] && res.data["feature"].startWith("http")) {
+                  this.$set(this.articleFrom.fileList, 0, {
+                    url: res.data["feature"], name: res.data["title"]
+                  })
+                } else {
+                  this.$set(this.articleFrom.fileList, 0, {
+                    url: "zsw" + res.data["feature"], name: res.data["title"]
+                  })
+                }
+              } else {
+                this.articleFrom[key] = res.data[key]
+              }
+            })
 
-        })
-      } else {
-        this.saveBtn = true
+          })
+        } else {
+          this.saveBtn = true
+        }
       }
     }
-  }
 </script>
 
 <style scoped lang="scss">

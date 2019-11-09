@@ -7,8 +7,7 @@
           :data="commentData"
           style="width: 100%"
           border
-          fit
-          max-height="600"
+          max-height="700"
         >
           <el-table-column
             type="selection"
@@ -53,7 +52,7 @@
               <el-button size="small" icon="el-icon-edit">
                 编辑
               </el-button>
-              <el-button type="danger" size="small" icon="el-icon-delete">
+              <el-button type="danger" size="small" icon="el-icon-delete" @click="delComment(row)">
                 删除
               </el-button>
             </template>
@@ -63,7 +62,7 @@
     </el-main>
     <el-footer>
       <zsw-pagination
-        :page-index.sync="pageIndex"
+        :page-index.sync="currentPage"
         :page-size.sync="pageSize"
         :total="total"
         @change="handleQuery"
@@ -77,6 +76,7 @@
 
 <script>
   import {formatDate} from "../../../utils/formatDate"
+  import {postRequest} from "../../../api/api"
 
   export default {
     name: "Comment",
@@ -100,45 +100,34 @@
     },
     data() {
       return {
-        commentData: [
-          {
-            author: "小钟",
-            email: "xiaozhong@1233",
-            created: Date.now(),
-            content: "这是一条没有感情的评论",
-            status: "approved"
-          },
-          {
-            author: "小钟",
-            email: "xiaozhong@1233",
-            created: Date.now(),
-            content: "这是一条没有感情的评论",
-            status: "held"
-          },
-          {
-            author: "小钟",
-            email: "xiaozhong@1233",
-            created: Date.now(),
-            content: "这是一条没有感情的评论",
-            status: "rejected"
-          },
-          {
-            author: "小钟",
-            email: "xiaozhong@1233",
-            created: Date.now(),
-            content: "这是一条没有感情的评论",
-            status: "trashed"
-          }
-        ],
-        pageIndex:1,
-        pageSize:10,
-        total:12
+        commentData: [],
+        currentPage: 1,
+        pageSize: 10,
+        total: 12,
+        loading:false
       }
     },
-    methods:{
-      handleQuery(){
+    methods: {
+      handleQuery() {
+        this.getData()
+      },
+      getData() {
+        let params = {
+          pageSize: this.pageSize,
+          currentPage: this.currentPage
+        }
+        postRequest("comments/getAllComments", params).then(res => {
+          console.log("res：", res)
+          this.commentData = res.data.data
+          this.total = res.data.total
+        })
+      },
+      delComment(row){
 
       }
+    },
+    activated() {
+      this.getData()
     }
 
   }

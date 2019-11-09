@@ -4,15 +4,12 @@
       <div class="left-content">
         <zsw-title>分类目录<span class="hint" slot="hint">添加新分类目录</span></zsw-title>
 
-        <el-form :model="catalogFrom">
-          <el-form-item label="名称">
+        <el-form :model="catalogFrom" ref="catalogFrom" :rules="rulesCatalogFrom">
+          <el-form-item label="名称" prop="name" require>
             <el-input v-model="catalogFrom.name" placeholder="请输入名称"></el-input>
           </el-form-item>
-          <el-form-item label="别名">
-            <el-input v-model="catalogFrom.alias" placeholder="请输入别名"></el-input>
-          </el-form-item>
-          <el-form-item label="昵称">
-            <el-input v-model="catalogFrom.nickName" placeholder="请输入别名"></el-input>
+          <el-form-item label="别名" prop="slug" require>
+            <el-input v-model="catalogFrom.slug" placeholder="请输入别名"></el-input>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="onSubmit">添加</el-button>
@@ -36,7 +33,7 @@
           >
           </el-table-column>
           <el-table-column
-            prop="alias"
+            prop="slug"
             label="别名"
           >
           </el-table-column>
@@ -46,11 +43,33 @@
             <template slot-scope="scope">
               <el-button
                 size="mini"
-                @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                @click="handleEdit(scope.row)">编辑
+              </el-button>
+              <!-- 编辑 功能弹窗-->
+              <el-dialog
+                title="编辑分类"
+                :visible.sync="catelogDialogVisible"
+                width="30%"
+                :before-close="handleClose">
+                <el-form :model="editFrom" ref="editFrom" :rules="rulesCatalogFrom">
+                  <el-form-item label="名称" prop="name" require>
+                    <el-input v-model="editFrom.name" placeholder="请输入名称"></el-input>
+                  </el-form-item>
+                  <el-form-item label="别名" prop="slug" require>
+                    <el-input v-model="editFrom.slug" placeholder="请输入别名"></el-input>
+                  </el-form-item>
+                </el-form>
+                <span slot="footer" class="dialog-footer">
+                   <el-button @click="handleClose">取 消</el-button>
+                   <el-button type="primary" @click="updateCategories">确 定</el-button>
+                 </span>
+              </el-dialog>
+
               <el-button
                 size="mini"
                 type="danger"
-                @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                @click="handleDelete(scope.$index, scope.row)">删除
+              </el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -60,48 +79,108 @@
 </template>
 
 <script>
+  import {postRequest} from "../../../api/api"
+
   export default {
     name: "Catalog",
     data() {
       return {
+        catelogDialogVisible: false,
         catalogFrom: {
           name: null,
-          alias: null,
-          nickName:null
+          slug: null
         },
-        catalogTable: [
-          {
-            alias: "allCatalog",
-            name: "所有分类"
-          },
-          {
-            alias: "uncategorized",
-            name: "未分类"
-          },
-          {
-            alias: "funny",
-            name: "奇趣事"
-          },
-          {
-            alias: "living",
-            name: "会生活"
-          },
-          {
-            alias: "travel",
-            name: "爱旅行"
-          }
-        ]
+        editFrom: {
+          id: null,
+          name: null,
+          slug: null
+        },
+        catalogTable: [],
+        rulesCatalogFrom: {
+          name: [
+            {required: true, message: "请输入名称", trigger: "blur"},
+            {min: 3, max: 15, message: "长度在 10 到 15 个字符", trigger: "blur"}
+          ],
+          slug: [
+            {required: true, message: "请输入别名", trigger: "blur"},
+            {min: 3, max: 15, message: "长度在 10 到 15 个字符", trigger: "blur"}
+          ]
+        }
       }
     },
-    methods:{
-      handleEdit(){
+    activated() {
+      postRequest("article/getCategories").then(res => {
+        this.catalogTable = res.data || []
+      })
+    },
+    methods: {
+      handleClose() {
+        this.catelogDialogVisible = false
+        Object.keys(this.editFrom).forEach(key => {
+          this.editFrom[key] = null
+        })
+      },
+      async handleEdit(row) {
+        /*
+        * 更具Id 查询当前分类
+        * */
+        await postRequest("article/getCategoriesById", {id: row.id}).then(res => {
+          console.log("res：", res)
+          Object.keys(this.editFrom).forEach(key => {
+            this.editFrom[key] = res.data[key]
+          })
+        })
+        this.catelogDialogVisible = true
+      },
+      async updateCategories() {
+        this.$refs.editFrom.validate(async valid => {
+          console.log('valid：', valid)
+          if (valid) {
+            /* 验证通过 */
+            await  postRequest("article/updateCategories", this.editFrom).then(async res => {
+              if (res.data) {
+                this.$message({
+                  showClose: true,
+                  message: "添加成功",
+                  type: "success"
+                })
+                // 刷新列表页面
+                await postRequest("article/getCategories").then(res => {
+                  this.catalogTable = res.data || []
+                })
+              }
+            })
+            this.editFrom.name = null
+            this.editFrom.slug = null
+            this.catelogDialogVisible = false
+          }
+        })
+      },
+      handleDelete() {
 
       },
-      handleDelete(){
+      onSubmit() {
+        this.$refs.catalogFrom.validate(async valid => {
+          if (valid) {
+            /* 验证通过 */
+            postRequest("article/addCategories", this.catalogFrom).then(async res => {
+              if (res.data) {
+                this.$message({
+                  showClose: true,
+                  message: "添加成功",
+                  type: "success"
+                })
+                // 刷新列表页面
+                await postRequest("article/getCategories").then(res => {
+                  this.catalogTable = res.data || []
+                })
+                this.catalogFrom.name = null
+                this.catalogFrom.slug = null
 
-      },
-      onSubmit(){
-
+              }
+            })
+          }
+        })
       }
     }
   }
