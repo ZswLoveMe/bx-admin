@@ -16,7 +16,7 @@
     "element-ui": "^2.11.1",
     "express": "^4.17.1",
     "install": "^0.13.0",
-    "tinymce": "^5.1.1",
+    "tinymce": "^5.1.4",
     "tinymce-vue": "^1.0.0",
     "v-viewer": "^1.4.2",
     "vue": "^2.5.2",
